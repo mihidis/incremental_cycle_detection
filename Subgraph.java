@@ -3,6 +3,8 @@ public class Subgraph {
 
 	private int i;
 	private int j;
+	int nextNode;
+	int lastNode;
 	private ArrayList<Nodes> nodes = new ArrayList<Nodes>();
 	
 	Subgraph(int i,int j){
@@ -38,4 +40,21 @@ public class Subgraph {
 		}
 		return temp;
 	}
+	
+	void setNextNode(int k) {
+		this.nextNode= k;
+	}
+	
+	void setLastNode(int k) {
+		this.lastNode = k;
+	}
+	
+	int getLastNode() {
+		return lastNode;
+	}
+	
+	int getNextNode() {
+		return nextNode;
+	}
+	
 }

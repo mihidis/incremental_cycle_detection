@@ -38,6 +38,8 @@ public class Graph {
 		for(int i=0;i<N;i++) {
 			for(int j=0;j<N;j++) {
 				subgraph[i][j] = new Subgraph(i,j);
+				subgraph[i][j].setLastNode(topSort.getTail()); //phase 2 new
+				subgraph[i][j].setNextNode(-1); //phase 2 new
 			}
 			subgraph[0][0].addNode(nodes[i]);
 		}
@@ -63,7 +65,7 @@ public class Graph {
 			Move_up(Xup);
 			Move_down(Xdown);
 			//topSort = new TopSort(this, nodes);
-			topSort.printTopSort();
+			//topSort.printTopSort();
 			if(search(newEdge[0],newEdge[1])) {
 				System.out.println("Edge insertion creates cycle!");
 				for(Nodes element: nodes) {
@@ -72,9 +74,13 @@ public class Graph {
 				return true;
 			}else {
 				System.out.println("Edge insertions doesnt create cycle!");
+				
 				update_forward(newEdge[1]);
+				for(Nodes element: nodes) {
+					System.out.println(element.getLabel());
+				}
 			}
-			topSort.printTopSort();
+			//topSort.printTopSort();
 			
 			//System.out.println("nodes ancestors are : "+nodes[newEdge[0]].getAncestor());
 		}
@@ -144,11 +150,12 @@ public class Graph {
 			int i=nodes[element].getCurrSubgraph()[0];
 			int j=nodes[element].getCurrSubgraph()[1];
 			nodes[element].changeSubEdges(subgraph[i][j].getNodesToNum());
-			nodes[element].printSubEdges();
+			//nodes[element].printSubEdges();
 		}	
+		/*
 		for(Nodes node: nodes) {
 			node.printNodesInfo();
-		}
+		}*/
 	}
 	
 	ArrayList updateAncestors(int x,int y) {
@@ -215,7 +222,7 @@ public class Graph {
 			System.out.print("Move Up: "+element.getCurr()+ " ");
 		}
 		System.out.println();
-		topSort.moveDownChange(Q);
+		topSort.moveUpChange(Q,subgraph);
 	}
 	
 	void Move_down(ArrayList<Nodes> Xdown) {
@@ -224,7 +231,7 @@ public class Graph {
 			System.out.print("Move down: "+element.getCurr()+ " ");
 		}
 		System.out.println();
-		topSort.moveUpChange(Q);
+		topSort.moveDownChange(Q,subgraph);
 	}
 	
 	void printGraphInfo(){
@@ -245,7 +252,7 @@ public class Graph {
 		Ba.add(y);
 		int flag=0;
 		if(nodes[y].getCurrSubgraph()[0]!=nodes[x].getCurrSubgraph()[0] || nodes[y].getCurrSubgraph()[1]!=nodes[x].getCurrSubgraph()[1]) {
-			System.out.println("Vx =Vx' comparison ");
+			//System.out.println("Vx =Vx' comparison ");
 			flag=1;
 			
 		}
@@ -255,7 +262,7 @@ public class Graph {
 			while(Fa.size()>0 && Ba.size()>0) {
 				temp = topSort.findMin(Fa);
 				if(topSort.findMin(Bd)!=-1 && topSort.compare(x, topSort.findMin(Bd))) {
-					System.out.println("kx < ky comparison");
+					//System.out.println("kx < ky comparison");
 					return false;
 				}else {
 					if(explore_forward(x)==1) {

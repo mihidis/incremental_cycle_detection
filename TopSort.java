@@ -14,7 +14,7 @@ public class TopSort {
 		for(int i=0;i<graph.getN();i++) {
 			visited[i]=false;
 		}
-		for(int i=0;i<graph.getN();i++) {
+		for(int i=graph.getN()-1;i>=0;i--) {
 			if(visited[i]==false) {
 				topologicalSortUtil(graph,i,visited,stack);
 			}
@@ -122,6 +122,7 @@ public class TopSort {
 	}
 	
 	void insert_before(int x,int y) {
+		System.out.println("In insert before are: "+ x+" "+y);
 		if(nodes[y].getPrev()==-1) {
 			nodes[nodes[y].getNext()].setPrev(-1);
 			head=nodes[y].getNext();
@@ -149,6 +150,7 @@ public class TopSort {
 	}
 	
 	void insert_after(int x,int y) {
+		System.out.println("In insert after are: "+ x+" "+y);
 		if(nodes[y].getPrev()==-1) {
 			nodes[nodes[y].getNext()].setPrev(-1);
 			head=nodes[y].getNext();
@@ -179,19 +181,36 @@ public class TopSort {
 	
 	void label_conflicts(int x,int y,int order){
 		if(order==1) {
+			
 			while(true) {
-				if(nodes[nodes[x].getPrev()].getLabel()==nodes[x].getLabel()-0.0000001) {
-					label_conflicts(nodes[x].getPrev(),nodes[x].getPrev(),1);
+				
+				if(nodes[x].getPrev()!=-1) {
+					if(nodes[nodes[x].getPrev()].getLabel()==nodes[x].getLabel()-0.0000001) {
+						label_conflicts(nodes[x].getPrev(),y,1);
+						break;
+					}else {
+						nodes[y].setLabel(nodes[x].getLabel()-0.0000001);
+						break;
+					}
 				}else {
 					nodes[y].setLabel(nodes[x].getLabel()-0.0000001);
+					break;
 				}
 			}
 		}else {
 			while(true) {
-				if(nodes[nodes[x].getNext()].getLabel()==nodes[x].getLabel()+0.0000001) {
-					label_conflicts(nodes[x].getNext(),nodes[x].getPrev(),2);
+				
+				if(nodes[x].getNext()!=-1) {
+					if(nodes[nodes[x].getNext()].getLabel()==nodes[x].getLabel()+0.0000001) {
+						label_conflicts(nodes[x].getNext(),y,2);
+						break;
+					}else {
+						nodes[y].setLabel(nodes[x].getLabel()+0.0000001);
+						break;
+					}
 				}else {
-					nodes[y].setLabel(nodes[x].getLabel()+0.0000001);
+					nodes[y].setLabel(nodes[x].getLabel()+0.0000001);	
+					break;
 				}
 			}
 		}
@@ -225,7 +244,7 @@ public class TopSort {
 		}
 		return -1;
 	}
-	
+	/*
 	void moveUpChange(ArrayList<Nodes> Q) {
 		int temp = getTail();
 		while(!Q.isEmpty()) {
@@ -244,24 +263,86 @@ public class TopSort {
 			}
 		}
 		
+	}*/
+	void moveUpChange(ArrayList<Nodes> Q, Subgraph[][] g) {
+		
+		
+		int temp = getTail();
+		while(!Q.isEmpty()) {
+			
+			if(Q.contains(nodes[temp])){
+				int i = nodes[temp].getCurrSubgraph()[0];
+				int j = nodes[temp].getCurrSubgraph()[1];
+				int temp2 = getTail();
+				while(true) {
+					if(nodes[temp2].getPrev()!=-1) {
+						int i2 = nodes[temp2].getCurrSubgraph()[0];
+						int j2 = nodes[temp2].getCurrSubgraph()[1];
+						if(i2<i || (i2==i && j2>j)) {
+							System.out.println(temp+" "+i+" "+j);
+							System.out.println(temp2+" "+i2+" "+j2);
+							Q.remove(nodes[temp]);
+							int holdTemp=nodes[temp].getPrev();
+							insert_after(temp2,temp);
+							temp=holdTemp;
+							break;
+						}else {
+							temp2=nodes[temp2].getPrev();
+						}
+					}else {
+						Q.remove(nodes[temp]);
+						int holdTemp=nodes[temp].getPrev();
+						insert_before(temp2,temp);
+						temp=holdTemp;
+						break;
+					}
+				}
+			}else {
+				temp = nodes[temp].getPrev();
+			}
+		}
+		System.out.println("Top sort after one move up:");
+		printTopSort();
+		
 	}
 	
-	void moveDownChange(ArrayList<Nodes> Q) {
+	void moveDownChange(ArrayList<Nodes> Q,Subgraph[][] g) {
 		int temp = getHead();
 		while(!Q.isEmpty()) {
+			
 			if(Q.contains(nodes[temp])){
-				
-				if(temp!=tail) {
-					Q.remove(nodes[temp]);	
-					int cur = nodes[temp].getNext();
-					insert_after(tail,temp);
-					temp = cur;
-				}else {
-					Q.remove(nodes[temp]);	
+				int i = nodes[temp].getCurrSubgraph()[0];
+				int j = nodes[temp].getCurrSubgraph()[1];
+				int temp2 = getHead();
+				while(true) {
+					if(temp2!=-1) {
+						int i2 = nodes[temp2].getCurrSubgraph()[0];
+						int j2 = nodes[temp2].getCurrSubgraph()[1];
+						if(i<i2 || (i==i2 && j>j2)) {
+							System.out.println(temp+" "+i+" "+j);
+							System.out.println(temp2+" "+i2+" "+j2);
+							Q.remove(nodes[temp]);
+							int holdTemp=nodes[temp].getNext();
+							insert_before(temp2,temp);
+							temp=holdTemp;
+							break;
+						}else {
+							temp2=nodes[temp2].getNext();
+						}
+					}else {
+						Q.remove(nodes[temp]);
+						int holdTemp=nodes[temp].getNext();
+						insert_after(tail,temp);
+						temp=holdTemp;
+						break;
+					}
 				}
+
 			}else {
 				temp = nodes[temp].getNext();
 			}
 		}
+		System.out.println("Top sort after one move down:");
+		printTopSort();
 	}
 }

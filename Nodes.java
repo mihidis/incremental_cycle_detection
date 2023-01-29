@@ -6,6 +6,7 @@ public class Nodes {
 	private int node;
 	private double label;
 	private int[] currSubgraph = new int[2];
+	private int[] lastSubgraph = {0,0};
 	private Edges edges = new Edges();
 	private Edges incEdges = new Edges();
 	private ArrayList<Integer> ancestors = new ArrayList<Integer>();
@@ -142,6 +143,15 @@ public class Nodes {
 	public void setCurrSubgraph(int i,int j) {
 		currSubgraph[0]=i;
 		currSubgraph[1]=j;
+	}
+	
+	public int[] getLastSubgraph() {
+		return lastSubgraph;
+	}
+	
+	public void setLastSubgraph(int i,int j) {
+		lastSubgraph[0]=1;
+		lastSubgraph[1]=j;
 	}
 	
 	public ArrayList<Integer> getSubEdges(){
