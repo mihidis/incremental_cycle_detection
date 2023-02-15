@@ -1,7 +1,10 @@
+package IncrementalCycleDetection;
 
 public class BuildMaxHeap {
 	private int size;
    
+	//class used for max heap
+	
     void heapify(Nodes arr[], int N, int i)
     {
         int largest = i; 

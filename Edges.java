@@ -1,8 +1,11 @@
+package IncrementalCycleDetection;
 import java.util.*;
 
 public class Edges {
 	private ArrayList<Integer> edges = new ArrayList<>(); 
 	
+	
+	//class that saves the edges of every node
 	Edges(){
 		
 	}

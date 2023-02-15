@@ -1,6 +1,9 @@
+package IncrementalCycleDetection;
 import java.util.*;
 public class Subgraph {
 
+	//class used to store the subgraphs and values useful for nodes
+	
 	private int i;
 	private int j;
 	int nextNode;

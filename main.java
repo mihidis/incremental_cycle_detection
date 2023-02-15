@@ -1,10 +1,11 @@
+package IncrementalCycleDetection;
 import java.util.*;
 
 
 public class main {
 	public static void main(String[] args) {
-		int N = 10;
-		Graph  graph = new Graph(N);
+		int N = 5;// N indicates total nodes . give any value here
+		Graph  graph = new Graph(N); //initializes the graph
 		
 		Scanner scan = new Scanner(System.in);
 		String temp[];
@@ -12,15 +13,15 @@ public class main {
 		while(true) {
 			
 			System.out.println("Give new edge! ");
-			try{
+			try{ // catching wrong inputs
 				temp = scan.nextLine().split(" ");
 			
 				int[] newEdge = {Integer.parseInt(temp[0]),Integer.parseInt(temp[1])};
-				if(isbetween(newEdge,N)) {
+				if(isbetween(newEdge,N)) {//checks if the edge given is on limits (0 to N)
 					if(graph.addEdge(newEdge)) {
 						break;
 					}
-					checkTopSort(graph);
+					checkTopSort(graph); // after the update of the algorithm checks if the top sort is correct 
 				}else {
 					System.out.println("Vertex given out of bounds!");
 				}
@@ -40,7 +41,7 @@ public class main {
 		return false;
 	}
 	
-	public static void checkTopSort(Graph graph) {
+	public static void checkTopSort(Graph graph) {	
 		boolean flag = true;
 		ArrayList<Integer> list = new ArrayList<Integer>();
 		for(int element:graph.getTopSort()) {

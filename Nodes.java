@@ -1,3 +1,4 @@
+package IncrementalCycleDetection;
 import java.util.*;
 public class Nodes {
 	private int prev;
@@ -14,7 +15,7 @@ public class Nodes {
 	private Edges subEdges;
 	private Edges incSubEdges;
 	
-	Nodes(int node){
+	Nodes(int node){//initialization of the node
 		this.node = node;
 		this.curr = node;
 		ancestors.add(node);
@@ -74,7 +75,7 @@ public class Nodes {
 		return false;
 	}
 	
-	void changeSubEdges(ArrayList<Integer> subNodes) {
+	void changeSubEdges(ArrayList<Integer> subNodes) {//when subedges need to change we get the correct ones from here
 		subEdges= new Edges();
 		for(int element:subNodes) {
 			if(edges.getEdges().contains(element)) {

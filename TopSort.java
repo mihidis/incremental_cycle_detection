@@ -1,12 +1,14 @@
+package IncrementalCycleDetection;
 import java.util.*;
-
+//in this class theres the data structure for O(1) insert_after, insert_before, delete, compare
+//also stores the topological sorting of the nodes
 public class TopSort {
 	private int head;
 	private int tail;
 	private Nodes[] nodes;
 	Stack stack;
 	
-	TopSort(Graph graph, Nodes[] nodes){
+	TopSort(Graph graph, Nodes[] nodes){//initializing the top sort 
 		this.nodes = nodes;
 		stack = new Stack();
 		boolean visited[] = new boolean[graph.getN()];
@@ -20,7 +22,7 @@ public class TopSort {
 			}
 		}
 		makeNodes();
-		giveLabels();
+		giveLabels(); 
 	}
 	
 	void topologicalSortUtil(Graph graph,int v,boolean visited[],Stack stack) {
@@ -40,7 +42,8 @@ public class TopSort {
 		
 	}
 	
-	void makeNodes() {
+	void makeNodes() {// this function gets the stack and pops each element into its place storing the next and previous of every node
+					  //also stores the tail and head of the topological sort
 		head = (int) stack.pop();
 		nodes[head].setPrev(-1);
 		int tempPrev = head;
@@ -55,7 +58,7 @@ public class TopSort {
 		tail=tempPrev;
 	}
 	
-	void giveLabels() {
+	void giveLabels() {//labels are needed for the compare in constant time. its a value to compare the nodes
 		int index = 10000;
 		int temp = head;
 		while(true) {
@@ -84,7 +87,7 @@ public class TopSort {
 		System.out.println("");
 	}
 	
-	int[] returnTopSortToArr() {
+	int[] returnTopSortToArr() {// returns an array with the topological sorting of the nodes
 		int temp=head;
 		int [] Array = new int[nodes.length];
 		for(int i =0;i<nodes.length;i++) {
@@ -118,9 +121,9 @@ public class TopSort {
 		nodes[tempDes].setPrev(tempAsc);
 	}
 	
-	void insert_before(int x,int y) {
+	void insert_before(int x,int y) {//in this function i insert y before x
 		System.out.println("In insert before are: "+ x+" "+y);
-		if(nodes[y].getPrev()==-1) {
+		if(nodes[y].getPrev()==-1) {	//firstly i release y from his neighbors
 			nodes[nodes[y].getNext()].setPrev(-1);
 			head=nodes[y].getNext();
 		}else if(nodes[y].getNext()==-1) {
@@ -130,24 +133,21 @@ public class TopSort {
 			nodes[nodes[y].getPrev()].setNext(nodes[y].getNext());
 			nodes[nodes[y].getNext()].setPrev(nodes[y].getPrev());
 		}
-		if(nodes[x].getPrev()!=-1) {
-			label_conflicts(x,y,1);
-		}else {
-			nodes[y].setLabel(nodes[x].getLabel()-1);
-		}
-		nodes[y].setNext(x);
+		
+		nodes[y].setNext(x);	//set all the neighbors to appropriate linking 
 		if(nodes[x].getPrev()!=-1) {
 			nodes[nodes[x].getPrev()].setNext(y);
 			nodes[y].setPrev(nodes[x].getPrev());
 		}else {
-			nodes[y].setPrev(-1);
+			nodes[y].setPrev(-1);	
 			head=y;
 		}
 		nodes[x].setPrev(y);
+		label_conflicts(x,y,1); //deal with nodes that want to take the same label
 	}
 	
-	void insert_after(int x,int y) {
-		System.out.println("In insert after are: "+ x+" "+y);
+	void insert_after(int x,int y) {//in this function i insert y after x 
+		System.out.println("In insert after are: "+ x+" "+y);	//same things that happen in insert_before
 		if(nodes[y].getPrev()==-1) {
 			nodes[nodes[y].getNext()].setPrev(-1);
 			head=nodes[y].getNext();
@@ -158,12 +158,7 @@ public class TopSort {
 			nodes[nodes[y].getPrev()].setNext(nodes[y].getNext());
 			nodes[nodes[y].getNext()].setPrev(nodes[y].getPrev());
 		}
-		if(nodes[x].getNext()!=-1) {
-			label_conflicts(x,y,2);
-		}else {
-			nodes[y].setLabel(nodes[x].getLabel()+1);
-		}
-		
+
 		nodes[y].setPrev(x);
 		if(nodes[x].getNext()==-1) {
 			nodes[y].setNext(-1);
@@ -172,46 +167,28 @@ public class TopSort {
 			nodes[y].setNext(nodes[x].getNext());
 			nodes[nodes[x].getNext()].setPrev(y);
 		}
-		
 		nodes[x].setNext(y);
+		label_conflicts(x,y,2);
 	}
 	
-	void label_conflicts(int x,int y,int order){
-	
-		if(order==1) {
-			
-			while(true) {
-				
-				if(nodes[x].getPrev()!=-1) {
-					if(nodes[nodes[x].getPrev()].getLabel()==nodes[x].getLabel()-1) {
-						nodes[y].setLabel(nodes[x].getLabel()-1);
-						label_conflicts(y,nodes[x].getPrev(),1);
-						break;
-					}else {
-						nodes[y].setLabel(nodes[x].getLabel()-1);
-						break;
+	void label_conflicts(int x,int y,int order){//in case a node wants to take a label that another node already has
+												//i need to resolve this conflict
+		System.out.println("In label conflicts "+x+" "+y+" "+order);
+		if(x!=y) {
+			if(order==1) {
+				nodes[y].setLabel(nodes[nodes[y].getNext()].getLabel()-1);
+				if(nodes[y].getPrev()!=-1) {
+					if(nodes[nodes[y].getNext()].getLabel()-1==nodes[nodes[y].getPrev()].getLabel()){
+						label_conflicts(x,nodes[y].getPrev(),1);
 					}
-				}else {
-					nodes[y].setLabel(nodes[x].getLabel()-1);
-					break;
 				}
-			}
-		}else {
-			while(true) {
-				
-				if(nodes[x].getNext()!=-1) {
-					if(nodes[nodes[x].getNext()].getLabel()==nodes[x].getLabel()+1) {
-						nodes[y].setLabel(nodes[x].getLabel()+1);
-						label_conflicts(y,nodes[x].getNext(),2);
-						break;
-					}else {
-						nodes[y].setLabel(nodes[x].getLabel()+1);
-						break;
+			}else {
+				nodes[y].setLabel(nodes[nodes[y].getPrev()].getLabel()+1);
+				if(nodes[y].getNext()!=-1) {
+					if(nodes[nodes[y].getPrev()].getLabel()+1==nodes[nodes[y].getNext()].getLabel()) {
+						label_conflicts(x,nodes[y].getNext(),2);
 					}
-				}else {
-					nodes[y].setLabel(nodes[x].getLabel()+1);	
-					break;
-				}
+				}	
 			}
 		}
 	}
