@@ -109,17 +109,17 @@ public class Graph {
 			Move_down(Xdown);
 			if(search(newEdge[0],newEdge[1])) {//search is a bool function that is true if it found a cycle (phase 3)
 				System.out.println("Edge insertion creates cycle!");
-				for(Nodes element: nodes) {
-					System.out.println(element.getLabel());
-				}
+				//for(Nodes element: nodes) {
+				//	System.out.println(element.getLabel());
+				//}
 				return true;
 			}else {
 				System.out.println("Edge insertions doesnt create cycle!");
 				
 				update_forward(newEdge[1]);
-				for(Nodes element: nodes) {
-					System.out.println(element.getLabel());
-				}
+				//for(Nodes element: nodes) {
+				//	System.out.println(element.getLabel());
+				//}
 			}
 		}
 		return false;

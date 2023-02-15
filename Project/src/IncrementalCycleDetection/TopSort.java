@@ -122,7 +122,7 @@ public class TopSort {
 	}
 	
 	void insert_before(int x,int y) {//in this function i insert y before x
-		System.out.println("In insert before are: "+ x+" "+y);
+		//System.out.println("In insert before are: "+ x+" "+y);
 		if(nodes[y].getPrev()==-1) {	//firstly i release y from his neighbors
 			nodes[nodes[y].getNext()].setPrev(-1);
 			head=nodes[y].getNext();
@@ -147,7 +147,7 @@ public class TopSort {
 	}
 	
 	void insert_after(int x,int y) {//in this function i insert y after x 
-		System.out.println("In insert after are: "+ x+" "+y);	//same things that happen in insert_before
+		//System.out.println("In insert after are: "+ x+" "+y);			same things that happen in insert_before
 		if(nodes[y].getPrev()==-1) {
 			nodes[nodes[y].getNext()].setPrev(-1);
 			head=nodes[y].getNext();
@@ -173,7 +173,7 @@ public class TopSort {
 	
 	void label_conflicts(int x,int y,int order){//in case a node wants to take a label that another node already has
 												//i need to resolve this conflict
-		System.out.println("In label conflicts "+x+" "+y+" "+order);
+		
 		if(x!=y) {
 			if(order==1) {
 				nodes[y].setLabel(nodes[nodes[y].getNext()].getLabel()-1);
