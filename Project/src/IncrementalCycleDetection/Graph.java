@@ -23,7 +23,7 @@ public class Graph {
 		}		
 		
 		//this block is used so we can have a starting graph 
-		/*
+		
 		int[][] edgesToAdd = randomEdges(); //in this var we get edges to add to the starting graph
 		for(int i=0;i<edgesToAdd.length;i++) {
 			nodes[edgesToAdd[i][0]].addEdge(edgesToAdd[i][1]);
@@ -31,8 +31,8 @@ public class Graph {
 			updateAncestors(edgesToAdd[i][0],edgesToAdd[i][1]);
 			updateDescentants(edgesToAdd[i][0],edgesToAdd[i][1]);
 		}
-		*/
-		//
+		
+		
 		topSort = new TopSort(this,nodes); //initializes top sort
 		topSort.printTopSort();
 		createSubgraphs(); //initializes subgraphs
@@ -58,11 +58,11 @@ public class Graph {
 				i--;
 			}
 		}
-		/*
+		System.out.println("The random edges about to be added are:");
 		for(int[] element:edgesToAdd) {
 			System.out.println(element[0]+" "+element[1]);
 		}
-		*/
+		
 		return edgesToAdd;
 	}
 	

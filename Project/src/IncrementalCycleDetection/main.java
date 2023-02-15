@@ -4,7 +4,7 @@ import java.util.*;
 
 public class main {
 	public static void main(String[] args) {
-		int N = 5;// N indicates total nodes . give any value here
+		int N = 10;// N indicates total nodes . give any value here
 		Graph  graph = new Graph(N); //initializes the graph
 		
 		Scanner scan = new Scanner(System.in);
