@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Random;
 
 public class Graph {
 	private int N;
@@ -11,7 +12,6 @@ public class Graph {
 	private ArrayList<Integer> Fd;
 	private ArrayList<Integer> Ba;
 	private ArrayList<Integer> Bd;
-	//private Edges edges = new Edges();
 	
 	Graph(int N){
 		this.N=N;
@@ -19,17 +19,48 @@ public class Graph {
 		
 		for(int i=0;i<N;i++) {
 			nodes[i] = new Nodes(i);
-		}
+		}/*
+		int[][] edgesToAdd = randomEdges();
+		for(int i=0;i<edgesToAdd.length;i++) {
+			nodes[edgesToAdd[i][0]].addEdge(edgesToAdd[i][1]);
+			nodes[edgesToAdd[i][1]].addIncomingEdge(edgesToAdd[i][0]);
+			updateAncestors(edgesToAdd[i][0],edgesToAdd[i][1]);
+			updateDescentants(edgesToAdd[i][0],edgesToAdd[i][1]);
+		}*/
 		topSort = new TopSort(this,nodes);
 		topSort.printTopSort();
 		createSubgraphs();
+	}
+	
+	int[][] randomEdges() {
+		int randomEdges = 3;
+		int[][] edgesToAdd = new int[randomEdges][2];
+		Random rand = new Random();
+		for(int i=0;i<randomEdges;i++) {
+			int rand_int1 = rand.nextInt(N);
+			int rand_int2 = rand.nextInt(N);
+			if(rand_int1>rand_int2) {
+				edgesToAdd[i][0]=rand_int1;
+				edgesToAdd[i][1]=rand_int2;
+			}else if(rand_int1<rand_int2){
+				edgesToAdd[i][1]=rand_int1;
+				edgesToAdd[i][0]=rand_int2;
+			}else {
+				i--;
+			}
+		}
+		for(int[] element:edgesToAdd) {
+			System.out.println(element[0]+" "+element[1]);
+		}
+		
+		return edgesToAdd;
 	}
 	
 	int getN() {
 		return N;
 	}
 	
-	ArrayList returnIndexEdges(int i) {
+	ArrayList<Integer> returnIndexEdges(int i) {
 		return nodes[i].indexEdges();
 	}
 	
@@ -38,10 +69,12 @@ public class Graph {
 		for(int i=0;i<N;i++) {
 			for(int j=0;j<N;j++) {
 				subgraph[i][j] = new Subgraph(i,j);
-				subgraph[i][j].setLastNode(topSort.getTail()); //phase 2 new
-				subgraph[i][j].setNextNode(-1); //phase 2 new
 			}
-			subgraph[0][0].addNode(nodes[i]);
+		}
+		for(int k=0;k<N;k++) {
+			int i = nodes[k].getDescentant().size();
+			int j = nodes[k].getAncestor().size();
+			subgraph[i][j].addNode(nodes[k]);
 		}
 	}
 	
@@ -53,19 +86,14 @@ public class Graph {
 			ArrayList<Nodes> Xup = new ArrayList<Nodes>();
 			ArrayList<Nodes> Xdown = new ArrayList<Nodes>();
 			
-			//boolean family = nodes[newEdge[0]].checkRelation(newEdge[1]);
+			
 			nodes[newEdge[0]].addEdge(newEdge[1]);
 			nodes[newEdge[1]].addIncomingEdge(newEdge[0]);
-			/*
-			if(!family) {
-				updateSubgraphs(newEdge[0],newEdge[1],Xup,Xdown);
-			}*/
+			
 			updateSubgraphs(newEdge[0],newEdge[1],Xup,Xdown);
 			
 			Move_up(Xup);
 			Move_down(Xdown);
-			//topSort = new TopSort(this, nodes);
-			//topSort.printTopSort();
 			if(search(newEdge[0],newEdge[1])) {
 				System.out.println("Edge insertion creates cycle!");
 				for(Nodes element: nodes) {
@@ -80,9 +108,6 @@ public class Graph {
 					System.out.println(element.getLabel());
 				}
 			}
-			//topSort.printTopSort();
-			
-			//System.out.println("nodes ancestors are : "+nodes[newEdge[0]].getAncestor());
 		}
 		return false;
 	}
@@ -138,24 +163,16 @@ public class Graph {
 			}else {
 				Xdown.add(nodes[element]);
 			}
-			/*
-			subgraph[i][j].printSubNodes();
-			System.out.println("");
-			subgraph[temp1][temp2].printSubNodes();
-			System.out.println("\n");
-			*/
+			
 		}
 		for(int element: alteredNodes) {
-			//nodes[element].changeSubEdges(alteredNodes);
+			
 			int i=nodes[element].getCurrSubgraph()[0];
 			int j=nodes[element].getCurrSubgraph()[1];
 			nodes[element].changeSubEdges(subgraph[i][j].getNodesToNum());
-			//nodes[element].printSubEdges();
+			
 		}	
-		/*
-		for(Nodes node: nodes) {
-			node.printNodesInfo();
-		}*/
+		
 	}
 	
 	ArrayList updateAncestors(int x,int y) {
@@ -212,7 +229,7 @@ public class Graph {
 				alteredNodes.add(element);
 			}
 		}
-		//System.out.println(alteredNodes);
+
 		return alteredNodes;
 	}
 	
@@ -252,9 +269,7 @@ public class Graph {
 		Ba.add(y);
 		int flag=0;
 		if(nodes[y].getCurrSubgraph()[0]!=nodes[x].getCurrSubgraph()[0] || nodes[y].getCurrSubgraph()[1]!=nodes[x].getCurrSubgraph()[1]) {
-			//System.out.println("Vx =Vx' comparison ");
 			flag=1;
-			
 		}
 		
 		if(flag==0) {
@@ -262,7 +277,7 @@ public class Graph {
 			while(Fa.size()>0 && Ba.size()>0) {
 				temp = topSort.findMin(Fa);
 				if(topSort.findMin(Bd)!=-1 && topSort.compare(x, topSort.findMin(Bd))) {
-					//System.out.println("kx < ky comparison");
+					
 					return false;
 				}else {
 					if(explore_forward(x)==1) {
@@ -315,5 +330,9 @@ public class Graph {
 			}
 		}
 		return flag;
+	}
+	
+	public int[] getTopSort() {
+		return topSort.returnTopSortToArr();
 	}
 }

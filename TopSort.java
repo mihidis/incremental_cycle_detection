@@ -56,7 +56,7 @@ public class TopSort {
 	}
 	
 	void giveLabels() {
-		double index = 1.0;
+		int index = 10000;
 		int temp = head;
 		while(true) {
 			if(nodes[temp].getNext()==-1) {
@@ -64,7 +64,7 @@ public class TopSort {
 				break;
 			}else {
 				nodes[temp].setLabel(index);
-				index += 1.0;
+				index += 10000;
 				temp = nodes[temp].getNext();  
 			}
 		}
@@ -84,6 +84,16 @@ public class TopSort {
 		System.out.println("");
 	}
 	
+	int[] returnTopSortToArr() {
+		int temp=head;
+		int [] Array = new int[nodes.length];
+		for(int i =0;i<nodes.length;i++) {
+			Array[i]=temp;
+			temp = nodes[temp].getNext();
+		}
+		return Array;
+	}
+	
 	int getHead() {
 		return head;
 	}
@@ -91,19 +101,6 @@ public class TopSort {
 	int getTail() {
 		return tail;
 	}
-	/*
-	boolean compare(int x, int y) {
-		int temp=head;
-		while(true) {
-			if(temp==x) {
-				return true;
-			}else if(temp==y) {
-				return false;
-			}else {
-				temp = nodes[temp].getNext();
-			}
-		}
-	}*/
 	
 	boolean compare(int x,int y) {
 		if(nodes[x].getLabel()>nodes[y].getLabel()) {
@@ -136,7 +133,7 @@ public class TopSort {
 		if(nodes[x].getPrev()!=-1) {
 			label_conflicts(x,y,1);
 		}else {
-			nodes[y].setLabel(nodes[x].getLabel()-0.0000001);
+			nodes[y].setLabel(nodes[x].getLabel()-1);
 		}
 		nodes[y].setNext(x);
 		if(nodes[x].getPrev()!=-1) {
@@ -164,7 +161,7 @@ public class TopSort {
 		if(nodes[x].getNext()!=-1) {
 			label_conflicts(x,y,2);
 		}else {
-			nodes[y].setLabel(nodes[x].getLabel()+0.0000001);
+			nodes[y].setLabel(nodes[x].getLabel()+1);
 		}
 		
 		nodes[y].setPrev(x);
@@ -180,20 +177,22 @@ public class TopSort {
 	}
 	
 	void label_conflicts(int x,int y,int order){
+	
 		if(order==1) {
 			
 			while(true) {
 				
 				if(nodes[x].getPrev()!=-1) {
-					if(nodes[nodes[x].getPrev()].getLabel()==nodes[x].getLabel()-0.0000001) {
-						label_conflicts(nodes[x].getPrev(),y,1);
+					if(nodes[nodes[x].getPrev()].getLabel()==nodes[x].getLabel()-1) {
+						nodes[y].setLabel(nodes[x].getLabel()-1);
+						label_conflicts(y,nodes[x].getPrev(),1);
 						break;
 					}else {
-						nodes[y].setLabel(nodes[x].getLabel()-0.0000001);
+						nodes[y].setLabel(nodes[x].getLabel()-1);
 						break;
 					}
 				}else {
-					nodes[y].setLabel(nodes[x].getLabel()-0.0000001);
+					nodes[y].setLabel(nodes[x].getLabel()-1);
 					break;
 				}
 			}
@@ -201,15 +200,16 @@ public class TopSort {
 			while(true) {
 				
 				if(nodes[x].getNext()!=-1) {
-					if(nodes[nodes[x].getNext()].getLabel()==nodes[x].getLabel()+0.0000001) {
-						label_conflicts(nodes[x].getNext(),y,2);
+					if(nodes[nodes[x].getNext()].getLabel()==nodes[x].getLabel()+1) {
+						nodes[y].setLabel(nodes[x].getLabel()+1);
+						label_conflicts(y,nodes[x].getNext(),2);
 						break;
 					}else {
-						nodes[y].setLabel(nodes[x].getLabel()+0.0000001);
+						nodes[y].setLabel(nodes[x].getLabel()+1);
 						break;
 					}
 				}else {
-					nodes[y].setLabel(nodes[x].getLabel()+0.0000001);	
+					nodes[y].setLabel(nodes[x].getLabel()+1);	
 					break;
 				}
 			}
@@ -244,104 +244,88 @@ public class TopSort {
 		}
 		return -1;
 	}
-	/*
-	void moveUpChange(ArrayList<Nodes> Q) {
-		int temp = getTail();
-		while(!Q.isEmpty()) {
-			  
-			if(Q.contains(nodes[temp])){
-				if(temp!=head) {
-					Q.remove(nodes[temp]);
-					int cur = nodes[temp].getPrev();
-					insert_before(head,temp);
-					temp=cur;
-				}else {
-					Q.remove(nodes[temp]);
-				}
-			}else {
-				temp = nodes[temp].getPrev();
-			}
-		}
-		
-	}*/
+	
 	void moveUpChange(ArrayList<Nodes> Q, Subgraph[][] g) {
 		
+		Nodes[] Qarr = new Nodes[Q.size()];
+		for(int i=0;i<Qarr.length;i++) {
+			Qarr[i]= Q.get(i);
+		}
+		BuildMaxHeap maxHeap = new BuildMaxHeap();
+		maxHeap.buildHeap(Qarr,Qarr.length);
+		//maxHeap.printHeap(Qarr, Qarr.length);
 		
-		int temp = getTail();
 		while(!Q.isEmpty()) {
-			
-			if(Q.contains(nodes[temp])){
-				int i = nodes[temp].getCurrSubgraph()[0];
-				int j = nodes[temp].getCurrSubgraph()[1];
-				int temp2 = getTail();
-				while(true) {
-					if(nodes[temp2].getPrev()!=-1) {
-						int i2 = nodes[temp2].getCurrSubgraph()[0];
-						int j2 = nodes[temp2].getCurrSubgraph()[1];
-						if(i2<i || (i2==i && j2>j)) {
-							System.out.println(temp+" "+i+" "+j);
-							System.out.println(temp2+" "+i2+" "+j2);
-							Q.remove(nodes[temp]);
-							int holdTemp=nodes[temp].getPrev();
-							insert_after(temp2,temp);
-							temp=holdTemp;
-							break;
-						}else {
-							temp2=nodes[temp2].getPrev();
-						}
-					}else {
-						Q.remove(nodes[temp]);
-						int holdTemp=nodes[temp].getPrev();
-						insert_before(temp2,temp);
-						temp=holdTemp;
+			int i = nodes[Qarr[0].getCurr()].getCurrSubgraph()[0];
+			int j = nodes[Qarr[0].getCurr()].getCurrSubgraph()[1];
+			int temp = getTail();
+			while(true) {
+				
+				if(nodes[temp].getPrev()!=-1) {
+					int i2 = nodes[temp].getCurrSubgraph()[0];
+					int j2 = nodes[temp].getCurrSubgraph()[1];
+					if(i2<i || (i2==i && j2>j)) {
+						Q.remove(Qarr[0]);
+						insert_after(temp,nodes[maxHeap.extractMax(Qarr)].getCurr());
 						break;
+					}else {
+						temp= nodes[temp].getPrev();
 					}
+				}else {
+					
+					Q.remove(Qarr[0]);
+					for(Nodes element:Q) {
+						System.out.println(element.getCurr());
+					}
+					insert_before(temp,nodes[maxHeap.extractMax(Qarr)].getCurr());
+					break;
 				}
-			}else {
-				temp = nodes[temp].getPrev();
-			}
+			}	
 		}
 		System.out.println("Top sort after one move up:");
 		printTopSort();
-		
 	}
 	
 	void moveDownChange(ArrayList<Nodes> Q,Subgraph[][] g) {
-		int temp = getHead();
+		Nodes[] Qarr = new Nodes[Q.size()];
+		for(int i=0;i<Qarr.length;i++) {
+			Qarr[i]= Q.get(i);
+		}
+		BuildMinHeap minHeap = new BuildMinHeap();
+		minHeap.buildHeap(Qarr,Qarr.length);
+		//minHeap.printHeap(Qarr, Qarr.length);
+
 		while(!Q.isEmpty()) {
-			
-			if(Q.contains(nodes[temp])){
-				int i = nodes[temp].getCurrSubgraph()[0];
-				int j = nodes[temp].getCurrSubgraph()[1];
-				int temp2 = getHead();
-				while(true) {
-					if(temp2!=-1) {
-						int i2 = nodes[temp2].getCurrSubgraph()[0];
-						int j2 = nodes[temp2].getCurrSubgraph()[1];
-						if(i<i2 || (i==i2 && j>j2)) {
-							System.out.println(temp+" "+i+" "+j);
-							System.out.println(temp2+" "+i2+" "+j2);
-							Q.remove(nodes[temp]);
-							int holdTemp=nodes[temp].getNext();
-							insert_before(temp2,temp);
-							temp=holdTemp;
-							break;
-						}else {
-							temp2=nodes[temp2].getNext();
-						}
+			int i = nodes[Qarr[0].getCurr()].getCurrSubgraph()[0];
+			int j = nodes[Qarr[0].getCurr()].getCurrSubgraph()[1];
+			int temp = getHead();
+			while(true) {
+				if(nodes[temp].getNext()!=-1) {
+					int i2 = nodes[temp].getCurrSubgraph()[0];
+					int j2 = nodes[temp].getCurrSubgraph()[1];
+					if(i<i2 || (i==i2 && j>j2)) {
+						Q.remove(Qarr[0]);
+						insert_before(temp,nodes[minHeap.extractMin(Qarr)].getCurr());
+						break;
 					}else {
-						Q.remove(nodes[temp]);
-						int holdTemp=nodes[temp].getNext();
-						insert_after(tail,temp);
-						temp=holdTemp;
+						temp = nodes[temp].getNext();
+					}
+				}else {
+					int i2 = nodes[temp].getCurrSubgraph()[0];
+					int j2 = nodes[temp].getCurrSubgraph()[1];
+					if(i<i2 || (i==i2 && j>j2)) {
+						Q.remove(Qarr[0]);
+						insert_before(temp,nodes[minHeap.extractMin(Qarr)].getCurr());
+						break;
+					}else {
+						Q.remove(Qarr[0]);
+						insert_after(temp,nodes[minHeap.extractMin(Qarr)].getCurr());
 						break;
 					}
 				}
-
-			}else {
-				temp = nodes[temp].getNext();
 			}
 		}
+		
 		System.out.println("Top sort after one move down:");
 		printTopSort();
 	}

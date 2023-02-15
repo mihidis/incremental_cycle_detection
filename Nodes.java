@@ -4,7 +4,7 @@ public class Nodes {
 	private int next;
 	private int curr;
 	private int node;
-	private double label;
+	private int label;
 	private int[] currSubgraph = new int[2];
 	private int[] lastSubgraph = {0,0};
 	private Edges edges = new Edges();
@@ -120,11 +120,11 @@ public class Nodes {
 		return curr;
 	}
 	
-	public double getLabel() {
+	public int getLabel() {
 		return label;
 	}
 	
-	public void setLabel(double label) {
+	public void setLabel(int label) {
 		this.label=label;
 	}
 	
